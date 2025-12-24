@@ -8,7 +8,8 @@ This project demonstrates the implementation of a Hub-and-Spoke network architec
 - Spoke VNet hosts a Windows VM
 - Internet-bound traffic is forced through Azure Firewall
 - DNAT is used to allow RDP access
-- Application rules restrict outbound access
+- Application rules restrict outbound access (L7 traffic)
+- Network rules are present but not used for outbound web traffic
 
 ## Resources Created
 
@@ -49,6 +50,7 @@ This project demonstrates the implementation of a Hub-and-Spoke network architec
   - Next hop address: Firewall private IP
 - Associated the route table with `SN-vm-prod`.
 - Verified effective routes showing traffic forced through the firewall.
+- Screenshot reference: screenshots/1-udr-0.0.0.0-via-firewall.png
 
 ### 5. DNAT for RDP Access
 - RDP access failed after UDR enforcement (expected behavior).
@@ -56,24 +58,22 @@ This project demonstrates the implementation of a Hub-and-Spoke network architec
   - TCP port 3389
   - Firewall public IP → VM private IP
 - Successfully restored RDP access via firewall.
+- Screenshot reference: screenshots/2-firewall-policy-rules.png
 
 ### 6. Application Rules for Internet Access
 - Created an application rule `allow-prod-browse`:
   - Source: VM private IP
   - Protocol: HTTP/HTTPS (ports 80, 443)
   - Allowed FQDN: `www.google.com`
-- Verified:
-  - Google accessible 
-  - Other sites (e.g., Facebook) blocked 
+- Verified via screenshots:
+  - Google accessible: screenshots/3-outbound-allowed-google.png
+  - Other sites blocked (e.g., Facebook): screenshots/4-outbound-blocked-facebook.png
 
 ## Key Learnings
 - Importance of UDRs in enforcing centralized traffic inspection
 - How DNAT enables secure inbound access through Azure Firewall
 - Fine-grained outbound control using application rules
 - Real-world troubleshooting of connectivity issues
-  
-## Screenshots
-Refer to the `screenshots/` folder for configuration and validation evidence.
 
 ## Cleanup
 All resources were deleted after testing to avoid unnecessary Azure costs.
